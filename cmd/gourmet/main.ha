@@ -4,6 +4,8 @@ use os;
 use strings;
 use log;
 use path;
+use fs;
+use io;
 
 export fn main() void = {
 	let buf = path::init()!;
@@ -12,7 +14,19 @@ export fn main() void = {
 	case let err: path::error =>
 		fmt::fatal("Invalid Path:", path::strerror(err));
 	};
-	log::println(path::string(&buf));
+	let iter = match (os::iter(path::string(&buf))) {
+	case let this: *fs::iterator =>
+		yield this;
+	case let err: fs::error =>
+		fmt::fatal("Reading gourmet data directory:", fs::strerror(err));
+	};
+	defer fs::finish(iter);
+	for (let dir => fs::next(iter)!) {
+		path::push(&buf, dir.name)!;
+		defer path::pop(&buf);
+		let file = os::open(path::string(&buf))!;
+		defer io::close(file)!;
+	};
 };
 
 fn gourmet_path(buf: *path::buffer) (void | path::error) = {
