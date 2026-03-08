@@ -95,7 +95,7 @@ Preparation time: {{ rec.prep_time }}min and Cooking time: {{ rec.cook_time }}mi
 
 Ingredients:
 {{- for (let ing &.. rec.ingredients) }}
-- {{ ing.name }}: {{ ing.count }}g
+- {{ ing.name }}: {{ ing.count }} {{ ing.unit }}
 {{- end }}
 {{- for (let step &.. rec.steps) }}
 

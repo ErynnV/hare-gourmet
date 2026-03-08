@@ -12,6 +12,7 @@ export type recipe = struct {
 export type ingredient = struct {
 	name: str,
 	count: uint,
+	unit: str,
 };
 
 export type step = struct {

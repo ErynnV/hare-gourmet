@@ -11,9 +11,11 @@ cook-time=2
 [ingredient]
 name=foo
 count=10
+unit=g
 [ingredient]
 name=bar
 count=8
+unit=piece
 [step]
 desc=lorem ipsum
 [step]
@@ -32,8 +34,10 @@ desc=sit do lorem
 	assert(len(subj.ingredients) == 2);
 	assert(subj.ingredients[0].name == "foo");
 	assert(subj.ingredients[0].count == 10);
+	assert(subj.ingredients[0].unit == "g");
 	assert(subj.ingredients[1].name == "bar");
 	assert(subj.ingredients[1].count == 8);
+	assert(subj.ingredients[1].unit == "piece");
 	assert(len(subj.steps) == 2);
 	assert(subj.steps[0].desc == "lorem ipsum");
 	assert(subj.steps[1].desc == "sit do lorem");

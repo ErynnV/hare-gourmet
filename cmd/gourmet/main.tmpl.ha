@@ -33,12 +33,13 @@ fn fprint_show_recipe(
 		io::writeall(_out, in[171..173])?;
 		fmt::fprint(_out, ing.count)?;
 		io::writeall(_out, in[188..189])?;
+		fmt::fprint(_out, ing.unit)?;
 	};
 	for (let step &.. rec.steps) {
-		io::writeall(_out, in[236..238])?;
+		io::writeall(_out, in[250..252])?;
 		fmt::fprint(_out, step.desc)?;
 	};
-	io::writeall(_out, in[263..264])?;
+	io::writeall(_out, in[277..278])?;
 };
 
 // Renders template for printing and writes it into a heap-allocated string.

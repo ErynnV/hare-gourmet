@@ -51,10 +51,12 @@ export fn read(
 				tmp_ing.name = strings::dup(ent.2)?;
 			case "count" =>
 				tmp_ing.count = stou(ent.2)?;
+			case "unit" =>
+				tmp_ing.unit = strings::dup(ent.2)?;
 			case =>
 				return invalid;
 			};
-			if (tmp_ing.name != "" && tmp_ing.count != 0) {
+			if (tmp_ing.name != "" && tmp_ing.count != 0 && tmp_ing.unit != "") {
 				append(rec.ingredients, tmp_ing)?;
 				tmp_ing = ingredient { ... };
 			};
@@ -81,6 +83,7 @@ export fn finish(rec: *recipe) void = {
 	free(rec.id);
 	for (let ing &.. rec.ingredients) {
 		free(ing.name);
+		free(ing.unit);
 	};
 	free(rec.ingredients);
 	for (let step &.. rec.steps) {
