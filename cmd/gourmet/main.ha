@@ -6,6 +6,7 @@ use log;
 use path;
 use fs;
 use io;
+use gourmet;
 
 export fn main() void = {
 	let buf = path::init()!;
@@ -14,18 +15,23 @@ export fn main() void = {
 	case let err: path::error =>
 		fmt::fatal("Invalid Path:", path::strerror(err));
 	};
-	let iter = match (os::iter(path::string(&buf))) {
-	case let this: *fs::iterator =>
+	let recs = match (load_recipes(buf)) {
+	case let this: []gourmet::recipe =>
 		yield this;
+	case let err: io::error =>
+		fmt::fatal("Reading error:", io::strerror(err));
+	case let err: gourmet::error =>
+		fmt::fatal("Format error:", gourmet::strerror(err));
 	case let err: fs::error =>
-		fmt::fatal("Reading gourmet data directory:", fs::strerror(err));
+		fmt::fatal("Fs error:", fs::strerror(err));
+	case nomem =>
+		abort();
 	};
-	defer fs::finish(iter);
-	for (let dir => fs::next(iter)!) {
-		path::push(&buf, dir.name)!;
-		defer path::pop(&buf);
-		let file = os::open(path::string(&buf))!;
-		defer io::close(file)!;
+	defer {
+		for (let rec &.. recs) {
+			gourmet::finish(rec);
+		};
+		free(recs);
 	};
 };
 
@@ -45,5 +51,18 @@ fn gourmet_path(buf: *path::buffer) (void | path::error) = {
 	path::push(buf, "gourmet")!;
 };
 
-
-
+fn load_recipes(
+	buf: path::buffer,
+) ([]gourmet::recipe | io::error | gourmet::error | fs::error | nomem)  = {
+	let iter = os::iter(path::string(&buf))?;
+	defer fs::finish(iter);
+	let recs: []gourmet::recipe = [];
+	for (let dir => fs::next(iter)!) {
+		path::push(&buf, dir.name)!;
+		defer path::pop(&buf);
+		let file = os::open(path::string(&buf))?;
+		defer io::close(file)!;
+		append(recs, gourmet::read(file)?)?;
+	};
+	return recs;
+};

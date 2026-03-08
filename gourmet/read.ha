@@ -7,7 +7,7 @@ use log;
 
 export fn read(
 	in: io::handle,
-) (recipe | ini::error | nomem | invalid) = {
+) (recipe | error | nomem) = {
 	const scan = ini::scan(in);
 	defer ini::finish(&scan);
 
@@ -20,11 +20,15 @@ export fn read(
 	};
 
 	for (true) {
-		let ent = match (ini::next(&scan)?) {
+		let ent = match (ini::next(&scan)) {
 		case let this: ini::entry =>
 			yield this;
 		case io::EOF =>
 			break;
+		case let err: ini::error =>
+			return err: error;
+		case nomem =>
+			return nomem;
 		};
 
 		switch (ent.0) {

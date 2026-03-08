@@ -1,3 +1,5 @@
+use format::ini;
+
 export type recipe = struct {
 	title: str,
 	prep_time: uint,
@@ -16,3 +18,14 @@ export type step = struct {
 };
 
 export type invalid = !void;
+
+export type error = !(ini::error | invalid);
+
+export fn strerror(err: error) str = {
+	match (err) {
+	case let err: ini::error =>
+		return ini::strerror(err);
+	case invalid =>
+		return "Invalid";
+	};
+};
