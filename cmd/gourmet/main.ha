@@ -39,13 +39,13 @@ export fn main() void = {
 	const help: []getopt::help = [
 		"recipe book",
 		("list", []): getopt::subcmd_help,
+
 	];
 
 	const cmd = getopt::parse(os::args, help...);
 	defer getopt::finish(&cmd);
 
-
-	let exec = match (cmd.subcmd){
+	let exec = match (cmd.subcmd) {
 	case void =>
 		getopt::printhelp(os::stderr, os::args[0], help)!;
 		os::exit(1);
@@ -63,7 +63,7 @@ export fn main() void = {
 
 fn exec_list(recs: []gourmet::recipe, cmd: getopt::command) void = {
 	for (let rec &.. recs) {
-		fmt::println(rec.title)!;
+		fmt::printfln("{}: {}", rec.id, rec.title,)!;
 	};
 };
 
@@ -94,7 +94,7 @@ fn load_recipes(
 		defer path::pop(&buf);
 		let file = os::open(path::string(&buf))?;
 		defer io::close(file)!;
-		append(recs, gourmet::read(file)?)?;
+		append(recs, gourmet::read(file, dir.name)?)?;
 	};
 	return recs;
 };

@@ -7,11 +7,13 @@ use log;
 
 export fn read(
 	in: io::handle,
+	id: str,
 ) (recipe | error | nomem) = {
 	const scan = ini::scan(in);
 	defer ini::finish(&scan);
 
 	const rec = recipe {
+		id = strings::dup(id)?,
 		...
 	};
 
@@ -76,6 +78,7 @@ export fn read(
 
 export fn finish(rec: *recipe) void = {
 	free(rec.title);
+	free(rec.id);
 	for (let ing &.. rec.ingredients) {
 		free(ing.name);
 	};

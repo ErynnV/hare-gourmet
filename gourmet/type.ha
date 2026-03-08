@@ -1,6 +1,7 @@
 use format::ini;
 
 export type recipe = struct {
+	id: str,
 	title: str,
 	prep_time: uint,
 	cook_time: uint,

@@ -5,7 +5,7 @@ use strings;
 @test fn test_read() void = {
 	const content = `
 [global]
-title=test
+title=une recette test
 prep-time=1
 cook-time=2
 [ingredient]
@@ -20,11 +20,13 @@ desc=lorem ipsum
 desc=sit do lorem
 `;
 	const in = memio::fixed(strings::toutf8(content));
-	const subj = read(&in);
+
+	const subj = read(&in, "test");
 	assert(subj is recipe);
 	const subj = subj as recipe;
 	defer finish(&subj);
-	assert(subj.title == "test");
+	assert(subj.id == "test");
+	assert(subj.title == "une recette test");
 	assert(subj.prep_time == 1);
 	assert(subj.cook_time == 2);
 	assert(len(subj.ingredients) == 2);
