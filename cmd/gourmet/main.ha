@@ -7,6 +7,7 @@ use path;
 use fs;
 use io;
 use gourmet;
+use getopt;
 
 export fn main() void = {
 	let buf = path::init()!;
@@ -15,6 +16,7 @@ export fn main() void = {
 	case let err: path::error =>
 		fmt::fatal("Invalid Path:", path::strerror(err));
 	};
+
 	let recs = match (load_recipes(buf)) {
 	case let this: []gourmet::recipe =>
 		yield this;
@@ -32,6 +34,36 @@ export fn main() void = {
 			gourmet::finish(rec);
 		};
 		free(recs);
+	};
+
+	const help: []getopt::help = [
+		"recipe book",
+		("list", []): getopt::subcmd_help,
+	];
+
+	const cmd = getopt::parse(os::args, help...);
+	defer getopt::finish(&cmd);
+
+
+	let exec = match (cmd.subcmd){
+	case void =>
+		getopt::printhelp(os::stderr, os::args[0], help)!;
+		os::exit(1);
+	case let subcmd: (str, *getopt::command) =>
+		yield switch (subcmd.0) {
+		case "list" =>
+			yield &exec_list;
+		case =>
+			getopt::printhelp(os::stderr, os::args[0], help)!;
+			os::exit(1);
+		};
+	};
+	exec(recs, cmd);
+};
+
+fn exec_list(recs: []gourmet::recipe, cmd: getopt::command) void = {
+	for (let rec &.. recs) {
+		fmt::println(rec.title)!;
 	};
 };
 
