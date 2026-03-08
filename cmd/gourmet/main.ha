@@ -91,7 +91,7 @@ fn exec_show(recs: []gourmet::recipe, cmd: *getopt::command) void = {
 #[template::gen(rec: *gourmet::recipe)]
 def show_recipe = `
 {{- rec.title }}
-Preparation time: {{ rec.prep_time }}min and Cooking time: {{ rec.cook_time }}min
+Preparation time: {{ const _ = fprint_time(_out, rec.prep_time)! }} and Cooking time: {{ const _ = fprint_time(_out, rec.cook_time)! }}
 
 Ingredients:
 {{- for (let ing &.. rec.ingredients) }}
@@ -102,6 +102,22 @@ Ingredients:
 {{ step.desc}}
 {{- end }}
 `;
+
+fn fprint_time(out: io::handle, sec: uint) (void | io::error) = {
+	const hour = sec / 60 / 60;
+	const sec = sec - hour * 60 * 60;
+	const min = sec / 60;
+	const sec = sec - min * 60;
+	if (hour > 0) {
+		fmt::fprintf(out, "{}h", hour)?;
+	};
+	if (min > 0) {
+		fmt::fprintf(out, "{}m", min)?;
+	};
+	if (sec > 0) {
+		fmt::fprintf(out, "{}s", sec)?;
+	};
+};
 
 fn gourmet_path(buf: *path::buffer) (void | path::error) = {
 	match (os::getenv("XDG_DATA_HOME")) {

@@ -6,8 +6,8 @@ use strings;
 	const content = `
 [global]
 title=une recette test
-prep-time=1
-cook-time=2
+prep-time=60
+cook-time=120
 [ingredient]
 name=foo
 count=10
@@ -29,8 +29,8 @@ desc=sit do lorem
 	defer finish(&subj);
 	assert(subj.id == "test");
 	assert(subj.title == "une recette test");
-	assert(subj.prep_time == 1);
-	assert(subj.cook_time == 2);
+	assert(subj.prep_time == 60);
+	assert(subj.cook_time == 120);
 	assert(len(subj.ingredients) == 2);
 	assert(subj.ingredients[0].name == "foo");
 	assert(subj.ingredients[0].count == 10);

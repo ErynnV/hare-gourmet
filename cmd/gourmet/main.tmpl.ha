@@ -23,23 +23,23 @@ fn fprint_show_recipe(
 	const in = strings::toutf8(show_recipe);
 	fmt::fprint(_out, rec.title)?;
 	io::writeall(_out, in[17..36])?;
-	fmt::fprint(_out, rec.prep_time)?;
-	io::writeall(_out, in[55..77])?;
-	fmt::fprint(_out, rec.cook_time)?;
-	io::writeall(_out, in[96..113])?;
+	const _ = fprint_time(_out, rec.prep_time)!;
+	io::writeall(_out, in[85..104])?;
+	const _ = fprint_time(_out, rec.cook_time)!;
+	io::writeall(_out, in[153..167])?;
 	for (let ing &.. rec.ingredients) {
-		io::writeall(_out, in[154..157])?;
+		io::writeall(_out, in[208..211])?;
 		fmt::fprint(_out, ing.name)?;
-		io::writeall(_out, in[171..173])?;
+		io::writeall(_out, in[225..227])?;
 		fmt::fprint(_out, ing.count)?;
-		io::writeall(_out, in[188..189])?;
+		io::writeall(_out, in[242..243])?;
 		fmt::fprint(_out, ing.unit)?;
 	};
 	for (let step &.. rec.steps) {
-		io::writeall(_out, in[250..252])?;
+		io::writeall(_out, in[304..306])?;
 		fmt::fprint(_out, step.desc)?;
 	};
-	io::writeall(_out, in[277..278])?;
+	io::writeall(_out, in[331..332])?;
 };
 
 // Renders template for printing and writes it into a heap-allocated string.
